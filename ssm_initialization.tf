@@ -140,12 +140,15 @@ mainSteps:
         commands:
           - |-
             #!/bin/bash
+            AWSCLI_VERSION="2.22.0"
+            CWA_VERSION="1.300049.0b1"
+            ANSIBLE_VERSION="2.18.1"
             apt-get -qqy update
             apt-get -qqy install jq apt-transport-https lsb-release ca-certificates curl gnupg software-properties-common snmp syslog-ng-core unzip pipx
             # install awscli v2
             mkdir /tmp/awscli
             cd /tmp/awscli
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-$${AWSCLI_VERSION}.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             bash ./aws/install
             sudo ./aws/install --bin-dir /root/awscli/bin --install-dir /root/awscli/awscli --update
@@ -159,7 +162,7 @@ mainSteps:
               ./install auto
             fi
             cd /tmp
-            wget https://amazoncloudwatch-agent.s3.amazonaws.com/debian/arm64/latest/amazon-cloudwatch-agent.deb
+            wget "https://amazoncloudwatch-agent.s3.amazonaws.com/debian/arm64/$${CWA_VERSION}/amazon-cloudwatch-agent.deb"
             dpkg -i amazon-cloudwatch-agent.deb
             /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c ssm:/cloudwatch-agent/amazon-cloudwatch-agent-$${INSTANCE_NAME}.json
       Targets:
@@ -184,7 +187,7 @@ mainSteps:
             #!/bin/bash
             sudo pipx ensurepath
             export PATH="$PATH:/root/.local/bin"
-            sudo pipx install ansible-core
+            sudo pipx install "ansible-core==$${ANSIBLE_VERSION}"
             sudo /root/.local/bin/ansible localhost -m ping > /dev/null 2>&1 && echo "SUCCESS: Ansible ping worked!" || { echo "ERROR: Ansible ping failed!"; exit 1; }
             INSTANCE_NAME=$(metadata tags/instance/InstanceName)
             INSTANCE_IP=$(metadata local-ipv4)
