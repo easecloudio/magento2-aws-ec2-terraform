@@ -1,0 +1,21 @@
+name: Replace vars
+on: workflow_dispatch
+  
+jobs:
+  replace-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ecs_v5
+      - name: Replace var.name
+        run: |
+          find . -type f -exec sed -i 's/var\.app\[\("\)\([a-z_]*\)\("\)\]/var.\2/g' {} \;
+      - name: Commit changes
+        run: |
+          git config --local user.name "magenx"
+          git config --local user.email "admin@magenx.com"
+          git add .
+          git commit -m "Replaced var.name"
+          git push origin ecs_v5
