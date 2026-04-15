@@ -21,7 +21,7 @@ resource "aws_ssm_association" "initialization" {
 # Create SSM Document to configure EC2 instances in Auto Scaling Group
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_ssm_document" "initialization" {
-  name            = "InstanceInitialization"
+  name            = "${local.project}-InstanceInitialization"
   document_format = "YAML"
   document_type   = "Automation"
   content         = <<EOF

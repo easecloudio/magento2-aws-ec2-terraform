@@ -7,7 +7,7 @@
 # Create SSM Document to check and configure EC2 instance webstack
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_ssm_document" "configuration" {
-  name            = "InstanceConfiguration"
+  name            = "${local.project}-InstanceConfiguration"
   document_format = "YAML"
   document_type   = "Automation"
   content         = <<EOF

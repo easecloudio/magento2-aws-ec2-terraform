@@ -1,21 +1,28 @@
-name: Replace vars
-on: workflow_dispatch
-  
+name: Terraform Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
 jobs:
-  replace-vars:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
-          ref: ecs_v5
-      - name: Replace var.name
-        run: |
-          find . -type f -exec sed -i 's/var\.app\[\("\)\([a-z_]*\)\("\)\]/var.\2/g' {} \;
-      - name: Commit changes
-        run: |
-          git config --local user.name "magenx"
-          git config --local user.email "admin@magenx.com"
-          git add .
-          git commit -m "Replaced var.name"
-          git push origin ecs_v5
+          terraform_version: "~1.9"
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
