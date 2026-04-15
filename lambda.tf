@@ -78,25 +78,13 @@ resource "aws_lambda_permission" "this" {
   qualifier     = aws_lambda_alias.image_optimization.name
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
-# Create Lambda function npm package
-# # ---------------------------------------------------------------------------------------------------------------------#
-resource "null_resource" "npm_install" {
-  provisioner "local-exec" {
-    command = "cd ${abspath(path.root)}/lambda/image_optimization && npm install"
-  }
-  triggers = {
-    always_run = "${filesha256("${abspath(path.root)}/lambda/image_optimization/index.mjs")}"
-  }
-}
-# # ---------------------------------------------------------------------------------------------------------------------#
-# Create Lambda function zip archive 
+# Create Lambda function zip archive
 # # ---------------------------------------------------------------------------------------------------------------------#
 data "archive_file" "lambda_image_optimization" {
-  depends_on       = [null_resource.npm_install]
   type             = "zip"
-  source_dir       = "${abspath(path.root)}/lambda/image_optimization"
+  source_dir       = "${abspath(path.root)}/lambda/imgproxy_router"
   output_file_mode = "0666"
-  output_path      = "${abspath(path.root)}/lambda/image_optimization.zip"
+  output_path      = "${abspath(path.root)}/lambda/imgproxy_router.zip"
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Lambda function with variables
@@ -114,12 +102,9 @@ resource "aws_lambda_function" "image_optimization" {
   publish       = true
   environment {
     variables = {
-      s3BucketRegion             = aws_s3_bucket.this["media"].region
-      originalImageBucketName    = aws_s3_bucket.this["media"].id
-      transformedImageBucketName = aws_s3_bucket.this["media-optimized"].id
-      transformedImageCacheTTL   = "max-age=31622400"
-      maxImageSize               = "4700000"
-   }
+      IMGPROXY_URL = "http://${aws_lb.this.dns_name}:8080"
+      S3_BUCKET    = aws_s3_bucket.this["media"].id
+    }
   }
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
