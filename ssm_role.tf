@@ -23,8 +23,8 @@ resource "aws_iam_role" "ssm_service_role" {
 }
 data "aws_iam_policy_document" "ssm_policy" {
   statement {
-    effect    = "Allow"
-    actions   = [
+    effect = "Allow"
+    actions = [
       "ec2:Describe*",
       "codedeploy:CreateDeployment",
       "codedeploy:GetDeploymentConfig",

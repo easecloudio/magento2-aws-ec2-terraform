@@ -23,8 +23,8 @@ resource "aws_iam_role" "eventbridge_service_role" {
 }
 data "aws_iam_policy_document" "eventbridge_policy" {
   statement {
-    effect    = "Allow"
-    actions   = [
+    effect = "Allow"
+    actions = [
       "ssm:StartAutomationExecution",
       "sqs:SendMessage"
     ]
@@ -46,11 +46,11 @@ resource "aws_cloudwatch_event_rule" "s3_setup_update" {
   name        = "${local.project}-s3-setup-update"
   description = "Trigger SSM document when s3 system bucket setup updated"
   event_pattern = jsonencode({
-    "source": ["aws.s3"],
-    "detail-type"  : ["Object Created"],
-    "detail"       : {
-      "bucket"     : { "name" : [aws_s3_bucket.this["system"].bucket] },
-      "object"     : { "key" : [{ "prefix" : "setup/" }] }
+    "source" : ["aws.s3"],
+    "detail-type" : ["Object Created"],
+    "detail" : {
+      "bucket" : { "name" : [aws_s3_bucket.this["system"].bucket] },
+      "object" : { "key" : [{ "prefix" : "setup/" }] }
     }
   })
 }
@@ -70,7 +70,7 @@ resource "aws_cloudwatch_event_target" "s3_setup_update" {
     input_paths = {
       S3ObjectKey = "$.detail.object.key"
     }
-  input_template = <<END
+    input_template = <<END
 {
   "S3ObjectKey": ["<S3ObjectKey>"]
 }
@@ -84,11 +84,11 @@ resource "aws_cloudwatch_event_rule" "s3_release_update" {
   name        = "${local.project}-s3-release-update"
   description = "Trigger SSM document when s3 system bucket release updated"
   event_pattern = jsonencode({
-    "source": ["aws.s3"],
-    "detail-type"  : ["Object Created"],
-    "detail"       : {
-      "bucket"     : { "name" : [aws_s3_bucket.this["system"].bucket] },
-      "object"     : { "key" : [{ "prefix" : "release/" }] }
+    "source" : ["aws.s3"],
+    "detail-type" : ["Object Created"],
+    "detail" : {
+      "bucket" : { "name" : [aws_s3_bucket.this["system"].bucket] },
+      "object" : { "key" : [{ "prefix" : "release/" }] }
     }
   })
 }
@@ -97,10 +97,10 @@ resource "aws_cloudwatch_event_rule" "s3_release_update" {
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_cloudwatch_event_target" "s3_release_update" {
   depends_on = [aws_autoscaling_group.this]
-  rule      = aws_cloudwatch_event_rule.s3_release_update.name
-  target_id = "${local.project}-s3-system-release-update"
-  arn       = aws_ssm_document.release.arn
-  role_arn  = aws_iam_role.eventbridge_service_role.arn
+  rule       = aws_cloudwatch_event_rule.s3_release_update.name
+  target_id  = "${local.project}-s3-system-release-update"
+  arn        = aws_ssm_document.release.arn
+  role_arn   = aws_iam_role.eventbridge_service_role.arn
   dead_letter_config {
     arn = aws_sqs_queue.dead_letter_queue.arn
   }
@@ -108,7 +108,7 @@ resource "aws_cloudwatch_event_target" "s3_release_update" {
     input_paths = {
       S3ObjectKey = "$.detail.object.key"
     }
-  input_template = <<END
+    input_template = <<END
 {
   "S3ObjectKey": ["<S3ObjectKey>"]
 }
@@ -119,15 +119,15 @@ END
 # EventBridge Rule for EC2 instance termination lifecycle
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_cloudwatch_event_rule" "ec2_terminating" {
-  name          = "${local.project}-ec2-terminating-rule"
-  description   = "Trigger on EC2 instance terminating"
+  name        = "${local.project}-ec2-terminating-rule"
+  description = "Trigger on EC2 instance terminating"
   event_pattern = jsonencode({
     "source" : ["aws.autoscaling"],
     "detail-type" : ["EC2 Instance-terminate Lifecycle Action"],
     "detail" : {
       "LifecycleTransition" : ["autoscaling:EC2_INSTANCE_TERMINATING"],
-      "Origin": [ "AutoScalingGroup" ],
-      "Destination": [ "EC2" ]
+      "Origin" : ["AutoScalingGroup"],
+      "Destination" : ["EC2"]
     }
   })
 }
@@ -145,10 +145,10 @@ resource "aws_cloudwatch_event_target" "ec2_terminating" {
   }
   input_transformer {
     input_paths = {
-      InstanceId = "$.detail.EC2InstanceId"
+      InstanceId           = "$.detail.EC2InstanceId"
       AutoScalingGroupName = "$.detail.AutoScalingGroupName"
     }
-  input_template = <<END
+    input_template = <<END
 {
   "InstanceId": ["<InstanceId>"],
   "AutoScalingGroupName": ["<AutoScalingGroupName>"]

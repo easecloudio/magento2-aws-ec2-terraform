@@ -7,14 +7,14 @@
 # Create SSM Document association with Auto Scaling Group
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_ssm_association" "initialization" {
-  for_each = var.ec2
+  for_each = local.env.ec2
   name     = aws_ssm_document.initialization.name
   targets {
     key    = "tag:aws:autoscaling:groupName"
     values = [aws_autoscaling_group.this[each.key].name]
   }
-  association_name = "InitEC2-${aws_autoscaling_group.this[each.key].name}"
-  document_version = "$LATEST"
+  association_name                 = "InitEC2-${aws_autoscaling_group.this[each.key].name}"
+  document_version                 = "$LATEST"
   automation_target_parameter_name = "InstanceIds"
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
@@ -24,7 +24,7 @@ resource "aws_ssm_document" "initialization" {
   name            = "InstanceInitialization"
   document_format = "YAML"
   document_type   = "Automation"
-  content = <<EOF
+  content         = <<EOF
 schemaVersion: "0.3"
 description: "Instance initialization: install base packages and register in cloudmap"
 assumeRole: ${aws_iam_role.ssm_service_role.arn}
@@ -153,7 +153,7 @@ mainSteps:
             bash ./aws/install
             sudo ./aws/install --bin-dir /root/awscli/bin --install-dir /root/awscli/awscli --update
             INSTANCE_NAME="$(metadata tags/instance/InstanceName)"
-            hostnamectl set-hostname $${INSTANCE_NAME}.${var.brand}.internal
+            hostnamectl set-hostname $${INSTANCE_NAME}.${local.env.brand}.internal
             if [ "$${INSTANCE_NAME}" = "frontend" ]; then
               apt -qqy install ruby
               cd /tmp
@@ -191,7 +191,7 @@ mainSteps:
             sudo /root/.local/bin/ansible localhost -m ping > /dev/null 2>&1 && echo "SUCCESS: Ansible ping worked!" || { echo "ERROR: Ansible ping failed!"; exit 1; }
             INSTANCE_NAME=$(metadata tags/instance/InstanceName)
             INSTANCE_IP=$(metadata local-ipv4)
-            SETUP_DIRECTORY="/opt/${var.brand}/setup"
+            SETUP_DIRECTORY="/opt/${local.env.brand}/setup"
             INSTANCE_DIRECTORY="$${SETUP_DIRECTORY}/$${INSTANCE_NAME}"
             mkdir -p "$${INSTANCE_DIRECTORY}"
             touch $${SETUP_DIRECTORY}/init

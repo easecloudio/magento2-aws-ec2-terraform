@@ -7,7 +7,7 @@
 # Create SSM Parameter configuration file for CloudWatch Agent
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_ssm_parameter" "cloudwatch_agent_config" {
-  for_each    = var.ec2
+  for_each    = local.env.ec2
   name        = "/cloudwatch-agent/amazon-cloudwatch-agent-${each.key}.json"
   description = "Configuration file for CloudWatch agent at ${each.key} for ${local.project}"
   type        = "String"
@@ -17,7 +17,7 @@ resource "aws_ssm_parameter" "cloudwatch_agent_config" {
         "logs_collected": {
           "files": {
             "collect_list": [
-            %{ if each.key == "frontend" ~}
+            %{if each.key == "frontend"~}
             {
                 "file_path": "/var/log/nginx/error.log",
                 "log_group_name": "${local.project}_nginx_error_log",
@@ -30,9 +30,9 @@ resource "aws_ssm_parameter" "cloudwatch_agent_config" {
                 "log_stream_name": "${each.key}-{instance_id}-{ip_address}",
                 "retention_in_days": 30
             },
-            %{ endif ~}
+            %{endif~}
             {
-                "file_path": "/opt/${var.brand}/setup/log/**.log",
+                "file_path": "/opt/${local.env.brand}/setup/log/**.log",
                 "log_group_name": "${local.project}_instance_configuration",
                 "log_stream_name": "${each.key}-{instance_id}-{ip_address}",
                 "retention_in_days": 30

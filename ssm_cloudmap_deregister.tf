@@ -10,7 +10,7 @@ resource "aws_ssm_document" "cloudmap_deregister" {
   name            = "CloudMapDeregister"
   document_format = "YAML"
   document_type   = "Automation"
-  content = <<EOF
+  content         = <<EOF
 schemaVersion: '0.3'
 description: Deregister instance from CloudMap on termination
 assumeRole: ${aws_iam_role.ssm_service_role.arn}

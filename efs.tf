@@ -25,7 +25,7 @@ resource "aws_efs_mount_target" "this" {
 # Create EFS access point for each path
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_efs_access_point" "this" {
-  for_each = var.efs
+  for_each       = local.env.efs
   file_system_id = aws_efs_file_system.this.id
   posix_user {
     uid = each.value.uid

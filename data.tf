@@ -27,12 +27,12 @@ data "aws_default_tags" "this" {}
 # Get the list of AWS Availability Zones available in this region
 # # ---------------------------------------------------------------------------------------------------------------------#
 data "aws_availability_zones" "available" {
-  state = "available"
+  state            = "available"
   exclude_zone_ids = ["use1-az3"]
 }
 data "aws_availability_zone" "available" {
   for_each = toset(data.aws_availability_zones.available.names)
-  name = each.key
+  name     = each.key
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Get the ID of default VPC
@@ -44,10 +44,10 @@ data "aws_vpc" "default" {
 # Get default subnets from AZ in this region/vpc
 # # ---------------------------------------------------------------------------------------------------------------------#
 data "aws_subnets" "default" {
-   filter {
+  filter {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
-   }
+  }
 
   filter {
     name   = "default-for-az"
@@ -61,7 +61,7 @@ data "aws_vpcs" "available" {}
 
 data "aws_vpc" "all" {
   for_each = toset(data.aws_vpcs.available.ids)
-  id = each.key
+  id       = each.key
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Get the ID of default Security Group

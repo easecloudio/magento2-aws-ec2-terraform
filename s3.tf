@@ -7,11 +7,11 @@
 # Create S3 bucket
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_s3_bucket" "this" {
-  for_each      = var.s3
+  for_each      = toset(local.env.s3)
   bucket        = "${local.project}-${each.key}"
   force_destroy = true
   tags = {
-    Name        = "${local.project}-${each.key}"
+    Name = "${local.project}-${each.key}"
   }
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
@@ -40,8 +40,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 # Block public access acl for internal S3 buckets
 # # ---------------------------------------------------------------------------------------------------------------------#	  
 resource "aws_s3_bucket_public_access_block" "this" {
-  for_each = aws_s3_bucket.this
-  bucket = aws_s3_bucket.this[each.key].id  
+  for_each                = aws_s3_bucket.this
+  bucket                  = aws_s3_bucket.this[each.key].id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
@@ -72,13 +72,13 @@ data "aws_iam_policy_document" "media" {
     principals {
       type        = "AWS"
       identifiers = [aws_cloudfront_origin_access_identity.this.iam_arn]
-   }
+    }
   }
 
   statement {
     sid       = "AllowLambdaGet"
     effect    = "Allow"
-    actions = ["s3:GetObject"]
+    actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.this["media"].arn}/*"]
     principals {
       type        = "AWS"
@@ -117,7 +117,7 @@ data "aws_iam_policy_document" "media" {
     sid       = "AllowEC2ListBucket"
     effect    = "Allow"
     actions   = ["s3:GetBucketLocation", "s3:ListBucket"]
-    resources = ["${aws_s3_bucket.this["media"].arn}","${aws_s3_bucket.this["media"].arn}/*"]
+    resources = ["${aws_s3_bucket.this["media"].arn}", "${aws_s3_bucket.this["media"].arn}/*"]
     principals {
       type        = "AWS"
       identifiers = values(aws_iam_role.ec2)[*].arn
@@ -131,7 +131,7 @@ data "aws_iam_policy_document" "mediaoptimized" {
   statement {
     sid       = "AllowLambdaGetPut"
     effect    = "Allow"
-    actions = ["s3:PutObject","s3:GetObject"]
+    actions   = ["s3:PutObject", "s3:GetObject"]
     resources = ["${aws_s3_bucket.this["media-optimized"].arn}/*"]
     principals {
       type        = "AWS"
@@ -153,7 +153,7 @@ resource "aws_s3_bucket_policy" "media" {
 # Create S3 bucket policy for ALB to write access logs
 # # ---------------------------------------------------------------------------------------------------------------------#
 data "aws_iam_policy_document" "system" {
- statement {
+  statement {
     sid    = "AllowSSMAgentS3Access"
     effect = "Allow"
     actions = [
@@ -193,7 +193,7 @@ data "aws_iam_policy_document" "system" {
       "${aws_s3_bucket.this["system"].arn}/*"
     ]
     principals {
-      type        = "AWS"
+      type = "AWS"
       identifiers = [
         aws_iam_role.codedeploy.arn
       ]
@@ -201,9 +201,9 @@ data "aws_iam_policy_document" "system" {
   }
 
   statement {
-    sid    = "CloudFrontAccess"
-    effect = "Allow"
-    actions = ["s3:PutObject"]
+    sid       = "CloudFrontAccess"
+    effect    = "Allow"
+    actions   = ["s3:PutObject"]
     resources = ["${aws_s3_bucket.this["system"].arn}/CloudFront/*"]
     principals {
       type        = "Service"
@@ -222,8 +222,8 @@ data "aws_iam_policy_document" "system" {
   }
 
   statement {
-    sid       = "AllowLambdaGet"
-    effect    = "Allow"
+    sid    = "AllowLambdaGet"
+    effect = "Allow"
     actions = [
       "s3:GetObject"
     ]
@@ -248,7 +248,7 @@ data "aws_iam_policy_document" "backup" {
     effect    = "Allow"
     resources = ["${aws_s3_bucket.this["backup"].arn}/*"]
     principals {
-      type        = "AWS"
+      type = "AWS"
       identifiers = [
         aws_iam_role.codedeploy.arn
       ]

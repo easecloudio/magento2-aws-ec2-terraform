@@ -12,5 +12,5 @@ resource "aws_sns_topic" "default" {
 resource "aws_sns_topic_subscription" "default" {
   topic_arn = aws_sns_topic.default.arn
   protocol  = "email"
-  endpoint  = var.admin_email
+  endpoint  = local.env.admin_email
 }

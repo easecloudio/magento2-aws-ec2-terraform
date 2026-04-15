@@ -11,7 +11,7 @@ resource "random_uuid" "this" {}
 # Generate random passwords
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "random_password" "this" {
-  for_each         = toset(var.password)
+  for_each         = toset(local.env.password)
   length           = 16
   lower            = true
   upper            = true
@@ -23,28 +23,28 @@ resource "random_password" "this" {
 # Generate random string
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "random_string" "this" {
-  for_each       = toset(var.string)
-  length         = 7
-  lower          = true
-  numeric        = true
-  special        = false
-  upper          = false
+  for_each = toset(local.env.string)
+  length   = 7
+  lower    = true
+  numeric  = true
+  special  = false
+  upper    = false
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Generate random stirng for s3
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "random_string" "s3" {
-  for_each       = var.s3
-  length         = 7
-  lower          = true
-  numeric        = true
-  special        = false
-  upper          = false
+  for_each = toset(local.env.s3)
+  length   = 7
+  lower    = true
+  numeric  = true
+  special  = false
+  upper    = false
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Select random subnets for ASG as required availability_zones_qty
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "random_shuffle" "subnets" {
   input        = [for subnet in aws_subnet.this : subnet.id]
-  result_count = var.vpc["availability_zones_qty"]
+  result_count = local.env.vpc.availability_zones_qty
 }

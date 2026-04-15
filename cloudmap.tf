@@ -7,7 +7,7 @@
 # Create CloudMap discovery service with private dns namespace
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_service_discovery_private_dns_namespace" "this" {
-  name        = "${var.brand}.internal"
+  name        = "${local.env.brand}.internal"
   description = "Namespace for ${local.project}"
   vpc         = aws_vpc.this.id
   tags = {
@@ -17,11 +17,11 @@ resource "aws_service_discovery_private_dns_namespace" "this" {
 
 resource "aws_service_discovery_service" "this" {
   for_each = {
-    for entry in setproduct(keys(var.ec2), keys(data.aws_availability_zone.available)) :
-      "${entry[0]}-${entry[1]}" => { 
-        service = entry[0], 
-        az      = entry[1] 
-      } 
+    for entry in setproduct(keys(local.env.ec2), keys(data.aws_availability_zone.available)) :
+    "${entry[0]}-${entry[1]}" => {
+      service = entry[0],
+      az      = entry[1]
+    }
   }
   name = "${local.project}-${each.value.service}-${each.value.az}"
   dns_config {

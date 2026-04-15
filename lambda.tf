@@ -90,16 +90,16 @@ data "archive_file" "lambda_image_optimization" {
 # Lambda function with variables
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_lambda_function" "image_optimization" {
-  provider      = aws.useast1
-  function_name = "${local.project}-image-optimization"
-  role          = aws_iam_role.lambda.arn
-  filename      = data.archive_file.lambda_image_optimization.output_path
+  provider         = aws.useast1
+  function_name    = "${local.project}-image-optimization"
+  role             = aws_iam_role.lambda.arn
+  filename         = data.archive_file.lambda_image_optimization.output_path
   source_code_hash = data.archive_file.lambda_image_optimization.output_base64sha256
-  runtime       = "nodejs20.x"
-  handler       = "index.handler"
-  memory_size   = 256
-  timeout       = 30
-  publish       = true
+  runtime          = "nodejs20.x"
+  handler          = "index.handler"
+  memory_size      = 256
+  timeout          = 30
+  publish          = true
   environment {
     variables = {
       IMGPROXY_URL = "http://${aws_lb.this.dns_name}:8080"

@@ -10,7 +10,7 @@ resource "aws_ssm_document" "configuration" {
   name            = "InstanceConfiguration"
   document_format = "YAML"
   document_type   = "Automation"
-  content = <<EOF
+  content         = <<EOF
 schemaVersion: "0.3"
 description: "Runs Ansible Playbook to configure EC2 instance"
 assumeRole: ${aws_iam_role.ssm_service_role.arn}
@@ -62,7 +62,7 @@ mainSteps:
             sudo /root/.local/bin/ansible localhost -m ping > /dev/null 2>&1 && echo "SUCCESS: Ansible ping worked!" || { echo "ERROR: Ansible ping failed!"; exit 1; }
             INSTANCE_NAME=$(metadata tags/instance/InstanceName)
             INSTANCE_IP=$(metadata local-ipv4)
-            SETUP_DIRECTORY="/opt/${var.brand}/setup"
+            SETUP_DIRECTORY="/opt/${local.env.brand}/setup"
             INSTANCE_DIRECTORY="$${SETUP_DIRECTORY}/$${INSTANCE_NAME}"
             mkdir -p "$${INSTANCE_DIRECTORY}"
             touch $${SETUP_DIRECTORY}/init
