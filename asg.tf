@@ -167,7 +167,7 @@ resource "aws_autoscaling_policy" "scalein" {
 resource "aws_cloudwatch_metric_alarm" "scalein" {
   for_each            = local.env.ec2
   alarm_name          = "${local.project}-${each.key} scale-in alarm"
-  comparison_operator = "GreaterThanThreshold"
+  comparison_operator = "LessThanThreshold"
   evaluation_periods  = local.env.asp.evaluation_periods_in
   metric_name         = "CPUUtilization"
   namespace           = "AWS/EC2"
