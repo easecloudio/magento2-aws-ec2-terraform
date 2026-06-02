@@ -15,13 +15,27 @@ resource "aws_security_group" "alb" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "alb" {
-  description       = "Security group rules for ALB ingress"
+resource "aws_vpc_security_group_ingress_rule" "alb_http" {
+  description       = "Allow HTTP inbound to ALB"
   security_group_id = aws_security_group.alb.id
-  ip_protocol       = "-1"
+  ip_protocol       = "tcp"
+  from_port         = 80
+  to_port           = 80
   cidr_ipv4         = "0.0.0.0/0"
   tags = {
-    Name = "${local.project}-alb-ingress-sg"
+    Name = "${local.project}-alb-http-ingress-sg"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "alb_https" {
+  description       = "Allow HTTPS inbound to ALB"
+  security_group_id = aws_security_group.alb.id
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_ipv4         = "0.0.0.0/0"
+  tags = {
+    Name = "${local.project}-alb-https-ingress-sg"
   }
 }
 
