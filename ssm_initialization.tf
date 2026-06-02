@@ -80,7 +80,7 @@ mainSteps:
             #!/bin/bash
             parameterstore() {
                 local KEY=$1
-                local PARAMETER_NAME="/${local.project}/$${KEY}"
+                local PARAMETER_NAME="/${local.project}/${local.environment}/$${KEY}"
                 sudo /root/awscli/bin/aws ssm get-parameter --name "$${PARAMETER_NAME}" --with-decryption --query 'Parameter.Value' --output text
             }
             if [ "$#" -eq 0 ]; then
