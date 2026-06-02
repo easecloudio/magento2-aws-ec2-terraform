@@ -145,10 +145,19 @@ mainSteps:
             ANSIBLE_VERSION="2.18.1"
             apt-get -qqy update
             apt-get -qqy install jq apt-transport-https lsb-release ca-certificates curl gnupg software-properties-common snmp syslog-ng-core unzip pipx
+            # detect architecture
+            ARCH=$(uname -m)
+            if [ "$${ARCH}" = "x86_64" ]; then
+              AWSCLI_ARCH="x86_64"
+              CWA_ARCH="amd64"
+            else
+              AWSCLI_ARCH="aarch64"
+              CWA_ARCH="arm64"
+            fi
             # install awscli v2
             mkdir /tmp/awscli
             cd /tmp/awscli
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-$${AWSCLI_VERSION}.zip" -o "awscliv2.zip"
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-$${AWSCLI_ARCH}-$${AWSCLI_VERSION}.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             bash ./aws/install
             sudo ./aws/install --bin-dir /root/awscli/bin --install-dir /root/awscli/awscli --update
@@ -162,7 +171,7 @@ mainSteps:
               ./install auto
             fi
             cd /tmp
-            wget "https://amazoncloudwatch-agent.s3.amazonaws.com/debian/arm64/$${CWA_VERSION}/amazon-cloudwatch-agent.deb"
+            wget "https://amazoncloudwatch-agent.s3.amazonaws.com/debian/$${CWA_ARCH}/$${CWA_VERSION}/amazon-cloudwatch-agent.deb"
             dpkg -i amazon-cloudwatch-agent.deb
             /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c ssm:/cloudwatch-agent/amazon-cloudwatch-agent-$${INSTANCE_NAME}.json
       Targets:
