@@ -1,13 +1,26 @@
 
 
-
 ///////////////////////////////////////////////[ SYSTEMS MANAGER - PARAMETERSTORE ]///////////////////////////////////////
 
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Create SSM Parameterstore for aws env
 # # ---------------------------------------------------------------------------------------------------------------------#
+locals {
+  sensitive_parameter_keys = toset([
+    "MARIADB_PASSWORD",
+    "REDIS_PASSWORD",
+    "RABBITMQ_PASSWORD",
+    "OPENSEARCH_PASSWORD",
+    "SES_KEY",
+    "SES_SECRET",
+    "SES_PASSWORD",
+    "SECURITY_HEADER",
+    "HTTP_X_HEADER",
+  ])
+}
+
 resource "aws_ssm_parameter" "aws_env" {
-  for_each    = local.parameters
+  for_each    = { for k, v in local.parameters : k => v if !contains(tolist(local.sensitive_parameter_keys), k) }
   name        = "/${local.project}/${local.environment}/${each.key}"
   description = "Environment variable value for ${each.key}"
   type        = "String"
@@ -16,6 +29,18 @@ resource "aws_ssm_parameter" "aws_env" {
     Name = "${local.project}-${local.environment}-${each.key}"
   }
 }
+
+resource "aws_ssm_parameter" "aws_env_secure" {
+  for_each    = { for k, v in local.parameters : k => v if contains(tolist(local.sensitive_parameter_keys), k) }
+  name        = "/${local.project}/${local.environment}/${each.key}"
+  description = "Sensitive environment variable value for ${each.key}"
+  type        = "SecureString"
+  value       = each.value
+  tags = {
+    Name = "${local.project}-${local.environment}-${each.key}"
+  }
+}
+
 locals {
   parameters = {
     PROJECT                      = local.project
