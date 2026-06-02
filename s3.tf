@@ -96,7 +96,7 @@ data "aws_iam_policy_document" "media" {
       identifiers = values(aws_iam_role.ec2)[*].arn
     }
     condition {
-      test     = "StringNotEquals"
+      test     = "StringEquals"
       variable = "aws:SourceVpc"
       values   = [aws_vpc.this.id]
     }
