@@ -38,11 +38,25 @@ locals {
       name        = "${local.project}-whitelist-ip-set"
       description = "IP set for whitelisted IP addresses"
       addresses   = local.whitelist_ips[*].ip_address
+      version     = "IPV4"
     }
     blacklist = {
       name        = "${local.project}-blacklist-ip-set"
       description = "IP set for blacklisted IP addresses"
       addresses   = local.blacklist_ips[*].ip_address
+      version     = "IPV4"
+    }
+    whitelist_v6 = {
+      name        = "${local.project}-whitelist-ip-set-v6"
+      description = "IPv6 IP set for whitelisted IP addresses"
+      addresses   = []
+      version     = "IPV6"
+    }
+    blacklist_v6 = {
+      name        = "${local.project}-blacklist-ip-set-v6"
+      description = "IPv6 IP set for blacklisted IP addresses"
+      addresses   = []
+      version     = "IPV6"
     }
   }
 
@@ -58,6 +72,18 @@ locals {
       action      = "block"
       ip_set_key  = "blacklist"
       metric_name = "${local.project}-block-blacklisted-ips"
+    }
+    allow-whitelisted-ips-v6 = {
+      priority    = 8
+      action      = "allow"
+      ip_set_key  = "whitelist_v6"
+      metric_name = "${local.project}-allow-whitelisted-ips-v6"
+    }
+    block-blacklisted-ips-v6 = {
+      priority    = 9
+      action      = "block"
+      ip_set_key  = "blacklist_v6"
+      metric_name = "${local.project}-block-blacklisted-ips-v6"
     }
   }
 }

@@ -204,6 +204,6 @@ resource "aws_wafv2_ip_set" "this" {
   name               = each.value.name
   description        = each.value.description
   scope              = "CLOUDFRONT"
-  ip_address_version = "IPV4"
+  ip_address_version = each.value.version
   addresses          = each.value.addresses
 }
