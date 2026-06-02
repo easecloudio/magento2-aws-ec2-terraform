@@ -209,7 +209,7 @@ resource "aws_cloudwatch_metric_alarm" "asg_max_instances" {
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   metric_name               = "GroupInServiceInstances"
-  namespace                 = local.project
+  namespace                 = "AWS/AutoScaling"
   period                    = 60
   statistic                 = "Maximum"
   threshold                 = each.value.max_size
