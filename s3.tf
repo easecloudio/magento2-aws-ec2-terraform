@@ -9,7 +9,7 @@
 resource "aws_s3_bucket" "this" {
   for_each      = toset(local.env.s3)
   bucket        = "${local.project}-${each.key}"
-  force_destroy = true
+  force_destroy = local.environment == "developer"
   tags = {
     Name = "${local.project}-${each.key}"
   }
