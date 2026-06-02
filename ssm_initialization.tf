@@ -30,8 +30,8 @@ description: "Instance initialization: install base packages and register in clo
 assumeRole: ${aws_iam_role.ssm_service_role.arn}
 parameters:
   InstanceIds:
-    type: String
-    description: The target instance id
+    type: StringList
+    description: The target instance ids
 mainSteps:
   - name: "WaitForInstanceStateRunning"
     action: "aws:waitForAwsResourceProperty"
