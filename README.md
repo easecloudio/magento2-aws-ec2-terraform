@@ -2,6 +2,8 @@
 
 Deploy a production-ready, auto-scaling Magento 2 infrastructure on AWS using Terraform and EC2 Graviton instances.
 
+**Developed and maintained by [EaseCloud](https://easecloud.io)** — cloud-native, AI-driven, and data infrastructure solutions.
+
 ## Overview
 
 This project provisions a complete Magento 2 infrastructure on AWS including:
@@ -124,6 +126,40 @@ When an EC2 instance launches, the SSM Automation document `<project>-InstanceIn
 - WAF rules: geo-blocking, IP allowlist/blocklist, rate limiting
 - Security groups scoped per service tier
 - IMDSv2 enforced on all instances
+
+## About EaseCloud
+
+EaseCloud is a cloud consulting and solutions company specializing in:
+
+- Cloud-native application development
+- AI & automation integrations
+- DevOps and infrastructure management
+- Magento 2 hosting and platform engineering
+
+We built this project to provide a production-grade, open-source AWS infrastructure baseline for Magento 2 — demonstrating our expertise in cloud architecture, security, and automation.
+
+If your team is scaling Magento 2 on AWS or needs help with infrastructure design, deployment pipelines, or managed support, [get in touch](https://easecloud.io).
+
+📧 [support@easecloud.io](mailto:support@easecloud.io)
+🌐 [easecloud.io](https://easecloud.io)
+
+---
+
+## Bug Reports & Issues
+
+Found a bug or have a feature request?
+
+🐛 [Create a GitHub issue](https://github.com/easecloud/magento2-aws-ec2-terraform/issues)
+
+Please include:
+- Terraform version (`terraform version`)
+- AWS provider version
+- Workspace name and relevant config excerpt (redact credentials)
+- Steps to reproduce
+- Expected vs actual behavior
+- Any error messages from `terraform plan` or `terraform apply`
+
+---
 
 ## License
 
