@@ -17,7 +17,7 @@ This is a one-time action per AWS account. Without it, the ASG launch templates 
 ## Step 2 — Clone the Repository
 
 ```bash
-git clone https://github.com/easecloud/magento2-aws-ec2-terraform.git
+git clone https://github.com/easecloudio/magento2-aws-ec2-terraform.git
 cd magento2-aws-ec2-terraform
 ```
 

@@ -34,7 +34,7 @@ All configuration is driven by a single YAML file per environment (`developer.co
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/easecloud/magento2-aws-ec2-terraform.git
+git clone https://github.com/easecloudio/magento2-aws-ec2-terraform.git
 cd magento2-aws-ec2-terraform
 
 # 2. Edit your environment config
@@ -149,7 +149,7 @@ If your team is scaling Magento 2 on AWS or needs help with infrastructure desig
 
 Found a bug or have a feature request?
 
-🐛 [Create a GitHub issue](https://github.com/easecloud/magento2-aws-ec2-terraform/issues)
+🐛 [Create a GitHub issue](https://github.com/easecloudio/magento2-aws-ec2-terraform/issues)
 
 Please include:
 - Terraform version (`terraform version`)
@@ -163,4 +163,4 @@ Please include:
 
 ## License
 
-Apache 2.0 — see [LICENSE](LICENSE)
+MIT. See [LICENSE](LICENSE).
